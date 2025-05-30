@@ -88,6 +88,16 @@ function! GetFieldNum()
 	return l:field_num
 endfunction
 
+function! GetFieldValue()
+	let l:line = getline('.')
+	let l:fields = split(l:line, '\t')
+	let l:fieldnum = GetFieldNum()
+	if l:fieldnum <= len(l:fields)
+		return str2nr(l:fields[l:fieldnum - 1])
+	endif
+	return 0
+endfunction
+
 let g:sam_fields = {
 	\ 1: 'QNAME: Query template NAME',
 	\ 2: 'FLAG: bitwise FLAG',
@@ -102,9 +112,41 @@ let g:sam_fields = {
 	\ 11: 'QUAL: ASCII of Phred-scaled base QUALity+33'
 	\}
 
+let g:sam_flag_bits = {
+	\ 0x1:   'paired in sequencing',
+	\ 0x2:   'properly paired',
+	\ 0x4:   'unmapped',
+	\ 0x8:   'mate unmapped',
+	\ 0x10:  'reverse strand',
+	\ 0x20:  'mate on reverse strand',
+	\ 0x40:  'first in pair',
+	\ 0x80:  'second in pair',
+	\ 0x100: 'not primary alignment',
+	\ 0x200: 'fails platform/vendor quality checks',
+	\ 0x400: 'PCR or optical duplicate',
+	\ 0x800: 'supplementary alignment'
+	\}
+
+function! DecodeSAMFlag(flag)
+	let l:bits = []
+	for l:bit in keys(g:sam_flag_bits)
+		if and(a:flag, str2nr(l:bit))
+			call add(l:bits, g:sam_flag_bits[l:bit])
+		endif
+	endfor
+	return join(l:bits, ', ')
+endfunction
+
 function! ShowSAMField()
-  let l:field = get(g:sam_fields, GetFieldNum(), 'AUX: AUXiliary fields')
-  echo l:field
+	let l:fieldnum = GetFieldNum()
+	if l:fieldnum == 2
+		let l:flagval = GetFieldValue()
+		let l:decoded = DecodeSAMFlag(l:flagval)
+		echo 'FLAG: ' . l:flagval . ' -- ' . l:decoded
+  	else
+	  	let l:field = get(g:sam_fields, l:fieldnum, 'AUX: AUXiliary fields')
+		echo l:field
+	endif
 endfunction
 
 let g:paf_fields = {
@@ -147,6 +189,7 @@ function! ShowGAFField()
   echo l:field
 endfunction
 
+command! BAM call ShowSAMField()
 command! SAM call ShowSAMField()
 command! PAF call ShowPAFField()
 command! GAF call ShowGAFField()
