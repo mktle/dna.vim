@@ -1,4 +1,9 @@
-dna.vim is a plugin that highlights features in sequencing files (e.g., SAM, PAF, anything with a DNA sequence in it). It colors/highlights the bases ACGT (consistent with IGV colors), operation blocks in CIGAR strings, SAM tag identifiers, and sequence names in fasta/fastq files.
+dna.vim is a plugin to aid visual parsing of sequencing files (e.g., SAM, PAF, anything with a DNA sequence in it). Current features:
+
+1. A/C/G/T are colored (consistent with IGV colors)
+2. Using the commands `:SAM`, `:GAF`:, or `:PAF` in their respective files will tell you the description of the field your cursor is hovering over (e.g., using `:SAM` in column 1 of a SAM/BAM file will print "QNAME: Query template NAME")
+3. Operation blocks within CIGAR strings are colored separately from each other
+4. Sequence names in FASTA/FASTQ files are colored
 
 # Screenshots
 
@@ -13,6 +18,8 @@ dna.vim is a plugin that highlights features in sequencing files (e.g., SAM, PAF
 Copy dna.vim into your ~/.vim/plugin/ directory. The plugin will automatically trigger for files with the following extensions: .sam, .paf, .fasta, .fa, .fastq, .fq, .gaf, .gfa
 
 You can also toggle the highlighting by using the command `:DNA`. For example, to view .bam files, you can view the file with `samtools view file.bam | vim -` and then apply `:DNA` inside vim.
+
+There are also file-specific commands (`:SAM`, `:GAF`:, or `:PAF`) that will print the description of the field the cursor is hovering over. The field descriptions are pulled from each file type's specification. For example, using `:SAM` in column 1 of a SAM/BAM file will print "QNAME: Query template NAME".
 
 # Performance
 
