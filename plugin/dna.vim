@@ -3,13 +3,17 @@ if exists('g:loaded_dna_colors')
 endif
 
 let g:loaded_dna_colors = 1
-let g:dna_highlight_enabled = 0
+let g:dna_enabled = 0
 
 augroup dna_colors
 	autocmd!
-	autocmd BufRead,BufNewFile *.sam,*.fasta,*.fa,*.fastq,*.fq,*.paf,*.gaf,*.gfa set filetype=dna
-	autocmd FileType dna let g:dna_highlight_enabled = 1
-	autocmd FileType dna call s:DNAHighlight()
+	autocmd BufRead,BufNewFile *.sam set filetype=sam
+	autocmd BufRead,BufNewFile *.fasta,*.fa set filetype=fasta
+	autocmd BufRead,BufNewFile *.fastq,*.fq set filetype=fastq
+	autocmd BufRead,BufNewFile *.paf set filetype=paf
+	autocmd BufRead,BufNewFile *.gaf set filetype=gaf
+	autocmd BufRead,BufNewFile *.gfa set filetype=gfa
+	autocmd FileType sam,fasta,fastq,paf,gaf,gfa call DNAToggle()
 augroup END
 
 function! s:DefineHighlight(name, pattern, gui_color, cterm_color)
@@ -17,9 +21,9 @@ function! s:DefineHighlight(name, pattern, gui_color, cterm_color)
 	execute 'highlight ' . a:name . ' ctermfg=' . a:cterm_color . ' guifg=' . a:gui_color
 endfunction
 
-function! s:DNAHighlight()
+function! s:BaseHighlight()
 	syntax sync maxlines=0
-	setlocal synmaxcol=9000
+	setlocal synmaxcol=5000
 	setlocal re=1
 	setlocal redrawtime=10000
 
@@ -28,8 +32,15 @@ function! s:DNAHighlight()
 	call s:DefineHighlight('Cytosine', 'C', '#0000ff', 21)
 	call s:DefineHighlight('Guanine',  'G', '#d17205', 208)
 	call s:DefineHighlight('Thymine',  'T', '#c80000', 160)
+	call s:DefineHighlight('Uracil', 'U', '#ff6f61', 203)
+	call s:DefineHighlight('Ambiguous', 'N', '#8e7cc3', 104)
 
-	" CIGAR operations
+	" Tags and sequence name lines
+	call s:DefineHighlight('Tag', '\w\w\ze:.:', '#00ffff', 14)
+	call s:DefineHighlight('NameLine', '^[>@][^\r\n]*', '#00ffff', 14)
+endfunction
+
+function! s:CIGARHighlight()
 	call s:DefineHighlight('CigarMatch',     '\d\+M', '#5fafff',  75)
 	call s:DefineHighlight('CigarEqual',     '\d\+=', '#5fd7af',  79)
 	call s:DefineHighlight('CigarMismatch',  '\d\+X', '#ff005f', 197)
@@ -37,18 +48,21 @@ function! s:DNAHighlight()
 	call s:DefineHighlight('CigarInsertion', '\d\+I', '#be6ff2', 135)
 	call s:DefineHighlight('CigarClipS',     '\d\+S', '#ff875f', 209)
 	call s:DefineHighlight('CigarClipH',     '\d\+H', '#ff875f', 209)
-
-	" Tags and sequence name lines
-	call s:DefineHighlight('Tag', '\w\w\ze:.:', '#00ffff', 14)
-	call s:DefineHighlight('NameLine', '^[>@][^\r\n]*', '#00ffff', 14)
 endfunction
 
-function! s:DNAClear()
+function! s:BaseClear()
 	syntax clear Adenine
 	syntax clear Cytosine
 	syntax clear Guanine
 	syntax clear Thymine
+	syntax clear Uracil
+	syntax clear Ambiguous
 
+	syntax clear Tag
+	syntax clear NameLine
+endfunction
+
+function! s:CIGARClear()
 	syntax clear CigarMatch
 	syntax clear CigarEqual
 	syntax clear CigarMismatch
@@ -56,18 +70,21 @@ function! s:DNAClear()
 	syntax clear CigarInsertion
 	syntax clear CigarClipS
 	syntax clear CigarClipH
-
-	syntax clear Tag
-	syntax clear NameLine
 endfunction
 
 function! DNAToggle()
-	if g:dna_highlight_enabled
-		call s:DNAClear()
-		let g:dna_highlight_enabled = 0
+	if g:dna_enabled
+		call s:BaseClear()
+		if &filetype != 'fasta' && &filetype != 'fastq' && &filetype != 'gfa'
+			call s:CIGARClear()
+		endif
+		let g:dna_enabled = 0
 	else
-		call s:DNAHighlight()
-		let g:dna_highlight_enabled = 1
+		call s:BaseHighlight()
+		if &filetype != 'fasta' && &filetype != 'fastq' && &filetype != 'gfa'
+			call s:CIGARHighlight()
+		endif
+		let g:dna_enabled = 1
 	endif
 endfunction
 

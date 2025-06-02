@@ -1,6 +1,6 @@
 dna.vim is a plugin to aid visual parsing of sequencing files (e.g., SAM, PAF, anything with a DNA sequence in it). Current features:
 
-1. A/C/G/T are colored (consistent with IGV colors)
+1. A/C/G/T/U/N are colored (consistent with IGV colors for ACGT)
 2. Using the commands `:SAM`, `:BAM`,`:GAF`, or `:PAF` in their respective files will tell you the description of the field your cursor is hovering over (e.g., using `:SAM` in column 2 of a SAM/BAM file will print a message along the lines of "FLAG: 2064 -- supplementary alignment, reverse strand")
 3. Operation blocks within CIGAR strings are colored separately from each other
 4. Sequence names in FASTA/FASTQ files are colored
