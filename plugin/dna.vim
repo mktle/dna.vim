@@ -202,11 +202,62 @@ let g:gaf_fields = {
 	\}
 
 function! ShowGAFField()
-  let l:field = get(g:gaf_fields, GetFieldNum(), 'Auxiliary fields')
-  echo l:field
+	let l:field = get(g:gaf_fields, GetFieldNum(), 'Auxiliary fields')
+	echo l:field
+endfunction
+
+let g:phred_scores = {
+	\ '!': '! = score 0, 1.000 probability of error',
+	\ '"': '" = score 1, 0.794 probability of error',
+	\ '#': '# = score 2, 0.631 probability of error',
+	\ '$': '$ = score 3, 0.501 probability of error',
+	\ '%': '% = score 4, 0.398 probability of error',
+	\ '&': '& = score 5, 0.316 probability of error',
+	\ '''': ''' = score 6, 0.251 probability of error',
+	\ '(': '( = score 7, 0.199 probability of error',
+	\ ')': ') = score 8, 0.158 probability of error',
+	\ '*': '* = score 9, 0.126 probability of error',
+	\ '+': '+ = score 10, 0.100 probability of error',
+	\ ',': ', = score 11, 0.079 probability of error',
+	\ '-': '- = score 12, 0.063 probability of error',
+	\ '.': '. = score 13, 0.050 probability of error',
+	\ '/': '/ = score 14, 0.040 probability of error',
+	\ '0': '0 = score 15, 0.032 probability of error',
+	\ '1': '1 = score 16, 0.025 probability of error',
+	\ '2': '2 = score 17, 0.020 probability of error',
+	\ '3': '3 = score 18, 0.016 probability of error',
+	\ '4': '4 = score 19, 0.013 probability of error',
+	\ '5': '5 = score 20, 0.010 probability of error',
+	\ '6': '6 = score 21, 0.008 probability of error',
+	\ '7': '7 = score 22, 0.006 probability of error',
+	\ '8': '8 = score 23, 0.005 probability of error',
+	\ '9': '9 = score 24, 0.004 probability of error',
+	\ ':': ': = score 25, 0.003 probability of error',
+	\ ';': '; = score 26, 0.002 probability of error',
+	\ '<': '< = score 27, 0.002 probability of error',
+	\ '=': '= = score 28, 0.001 probability of error',
+	\ '>': '> = score 29, 0.001 probability of error',
+	\ '?': '? = score 30, 0.001 probability of error',
+	\ '@': '@ = score 31, 0.0008 probability of error',
+	\ 'A': 'A = score 32, 0.0006 probability of error',
+	\ 'B': 'B = score 33, 0.0005 probability of error',
+	\ 'C': 'C = score 34, 0.0004 probability of error',
+	\ 'D': 'D = score 35, 0.0003 probability of error',
+	\ 'E': 'E = score 36, 0.0002 probability of error',
+	\ 'F': 'F = score 37, 0.0002 probability of error',
+	\ 'G': 'G = score 38, 0.0002 probability of error',
+	\ 'H': 'H = score 39, 0.0001 probability of error',
+	\ 'I': 'I = score 40, 0.0001 probability of error'
+	\}
+
+function! ShowPhred()
+	let l:char = getline('.')[col('.') - 1]
+	let l:score = get(g:phred_scores, l:char, 'Not a Phred score')
+	echo l:score
 endfunction
 
 command! BAM call ShowSAMField()
 command! SAM call ShowSAMField()
 command! PAF call ShowPAFField()
 command! GAF call ShowGAFField()
+command! Phred call ShowPhred()

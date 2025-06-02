@@ -3,7 +3,9 @@ dna.vim is a plugin to aid visual parsing of sequencing files (e.g., SAM, PAF, a
 1. A/C/G/T/U/N are colored (consistent with IGV colors for ACGT)
 2. Using the commands `:SAM`, `:BAM`,`:GAF`, or `:PAF` in their respective files will tell you the description of the field your cursor is hovering over (e.g., using `:SAM` in column 2 of a SAM/BAM file will print a message along the lines of "FLAG: 2064 -- supplementary alignment, reverse strand")
 3. Operation blocks within CIGAR strings are colored separately from each other
-4. Sequence names in FASTA/FASTQ files are colored
+4. Using `:Phred` will decode the Phred score of the hovered character (e.g., using it on a D will print "D is score 35, 0.0003 probability of error")
+5. Sequence names in FASTA/FASTQ files are colored
+6. Tags in alignment files are colored
 
 # Screenshots
 
@@ -20,6 +22,8 @@ Copy dna.vim into your ~/.vim/plugin/ directory. The plugin will automatically t
 You can also toggle the highlighting by using the command `:DNA`. For example, to view .bam files, you can view the file with `samtools view file.bam | vim -` and then apply `:DNA` inside vim.
 
 There are also file-specific commands (`:SAM`, `:GAF`:, or `:PAF`) that will print the description of the field the cursor is hovering over. The field descriptions are pulled from each file type's specification. For example, using `:SAM` in column 1 of a SAM/BAM file will print "QNAME: Query template NAME". Using `:SAM` in the flag field will also decode the flag (e.g., "FLAG: 2064 -- supplementary alignment, reverse strand").
+
+Similarly, using `:Phred` will print the meaning of the Phred score of the hovered character. For instance, when the cursor is over a D, `:Phred` will print "D is score 35, 0.0003 probability of error".
 
 # Performance
 
